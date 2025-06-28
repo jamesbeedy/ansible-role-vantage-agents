@@ -1,7 +1,5 @@
----
-# tasks/pypi_install.yml
 - name: Ensure python3 and pip are installed
-  apt:
+  ansible.builtin.apt:
     name:
       - python3
       - python3-pip
@@ -10,7 +8,7 @@
   become: true
 
 - name: Create directories for vantage-agent
-  file:
+  ansible.builtin.file:
     path: /opt/vantage-agent
     state: directory
     owner: root
@@ -19,7 +17,7 @@
   become: true
 
 - name: Create directories for jobbergate-agent
-  file:
+  ansible.builtin.file:
     path: /opt/jobbergate-agent
     state: directory
     owner: root
@@ -28,27 +26,31 @@
   become: true
 
 - name: Create venv for vantage-agent
-  command: python3 -m venv /opt/vantage-agent/venv
+  ansible.builtin.command: python3 -m venv /opt/vantage-agent/venv
   args:
     creates: /opt/vantage-agent/venv/bin/activate
+  changed_when: false
   become: true
 
 - name: Create venv for jobbergate-agent
-  command: python3 -m venv /opt/jobbergate-agent/venv
+  ansible.builtin.command: python3 -m venv /opt/jobbergate-agent/venv
   args:
     creates: /opt/jobbergate-agent/venv/bin/activate
+  changed_when: false
   become: true
 
 - name: Install vantage-agent from PyPI
-  command: /opt/vantage-agent/venv/bin/pip install vantage-agent
+  ansible.builtin.command: /opt/vantage-agent/venv/bin/pip install vantage-agent
+  changed_when: false
   become: true
 
 - name: Install jobbergate-agent from PyPI
-  command: /opt/jobbergate-agent/venv/bin/pip install jobbergate-agent
+  ansible.builtin.command: /opt/jobbergate-agent/venv/bin/pip install jobbergate-agent
+  changed_when: false
   become: true
 
 - name: Ensure /etc/vantage-agent exists
-  file:
+  ansible.builtin.file:
     path: /etc/vantage-agent
     state: directory
     owner: root
@@ -57,7 +59,7 @@
   become: true
 
 - name: Ensure /etc/jobbergate-agent exists
-  file:
+  ansible.builtin.file:
     path: /etc/jobbergate-agent
     state: directory
     owner: root
@@ -66,7 +68,7 @@
   become: true
 
 - name: Create vantage-agent.env
-  copy:
+  ansible.builtin.copy:
     dest: /etc/vantage-agent/vantage-agent.env
     content: |
       VANTAGE_AGENT_OIDC_CLIENT_ID={{ oidc_client_id }}
@@ -78,7 +80,7 @@
   become: true
 
 - name: Create jobbergate-agent.env
-  copy:
+  ansible.builtin.copy:
     dest: /etc/jobbergate-agent/jobbergate-agent.env
     content: |
       JOBBERGATE_AGENT_OIDC_CLIENT_ID={{ oidc_client_id }}
@@ -89,7 +91,7 @@
   become: true
 
 - name: Deploy vantage-agent systemd service
-  template:
+  ansible.builtin.template:
     src: vantage-agent.service.j2
     dest: /etc/systemd/system/vantage-agent.service
     owner: root
@@ -98,7 +100,7 @@
   become: true
 
 - name: Deploy jobbergate-agent systemd service
-  template:
+  ansible.builtin.template:
     src: jobbergate-agent.service.j2
     dest: /etc/systemd/system/jobbergate-agent.service
     owner: root
@@ -107,18 +109,20 @@
   become: true
 
 - name: Reload systemd
-  command: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+  changed_when: false
   become: true
 
 - name: Enable and start vantage-agent
-  service:
+  ansible.builtin.service:
     name: vantage-agent
     enabled: true
     state: started
   become: true
 
 - name: Enable and start jobbergate-agent
-  service:
+  ansible.builtin.service:
     name: jobbergate-agent
     enabled: true
     state: started

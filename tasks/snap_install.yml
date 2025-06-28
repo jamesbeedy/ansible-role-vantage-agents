@@ -1,13 +1,14 @@
 ---
 # tasks/snap_install.yml
+
 - name: Ensure snapd is installed
-  apt:
+  ansible.builtin.apt:
     name: snapd
     state: present
   become: true
 
 - name: Install and configure vantage-agent snap
-  snap:
+  community.general.snap:
     name: vantage-agent
     state: present
     classic: true
@@ -18,7 +19,7 @@
   become: true
 
 - name: Install and configure jobbergate-agent snap
-  snap:
+  community.general.snap:
     name: jobbergate-agent
     state: present
     classic: true
@@ -28,14 +29,14 @@
   become: true
 
 - name: Ensure vantage-agent is running
-  service:
+  ansible.builtin.service:
     name: snap.vantage-agent.daemon
     state: started
     enabled: true
   become: true
 
 - name: Ensure jobbergate-agent is running
-  service:
+  ansible.builtin.service:
     name: snap.jobbergate-agent.daemon
     state: started
     enabled: true

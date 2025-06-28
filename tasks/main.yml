@@ -1,13 +1,18 @@
 ---
+# This file is part of the Ansible role for Vantage Agents.
+# It includes tasks based on the installation type specified in the `install_type` variable.
+# The role supports two installation methods: 'snap' and 'pypi'.
+# The tasks are organized into separate files for each installation type, allowing for modular and maintainable code.
+#
 # tasks/main.yml
 - name: Set install_type to lower-case
-  set_fact:
+  ansible.builtin.set_fact:
     install_type: "{{ install_type | lower }}"
 
 - name: Include Snap tasks
-  include_tasks: snap_install.yml
+  ansible.builtin.include_tasks: snap_install.yml
   when: install_type == 'snap'
 
 - name: Include PyPI tasks
-  include_tasks: pypi_install.yml
+  ansible.builtin.include_tasks: pypi_install.yml
   when: install_type == 'pypi'
