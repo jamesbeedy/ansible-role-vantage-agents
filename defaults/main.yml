@@ -1,0 +1,10 @@
+---
+# defaults/main.yml
+# Default variables for vantage_agents role
+
+oidc_client_id: ""
+oidc_client_secret: ""
+cluster_name: ""
+
+# Installation type: 'snap' (default) or 'pypi'
+install_type: "snap"

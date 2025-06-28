@@ -1,0 +1,13 @@
+---
+# tasks/main.yml
+- name: Set install_type to lower-case
+  set_fact:
+    install_type: "{{ install_type | lower }}"
+
+- name: Include Snap tasks
+  include_tasks: snap_install.yml
+  when: install_type == 'snap'
+
+- name: Include PyPI tasks
+  include_tasks: pypi_install.yml
+  when: install_type == 'pypi'
